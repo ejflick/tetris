@@ -14,13 +14,13 @@ add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 
 # Create your game executable target as usual
-add_executable(tetris tetris.c)
+add_executable(tetris main.c)
 
 file(GLOB_RECURSE IMAGE_FILES "${RESOURCE_DIR}/*.png")
 file(COPY ${IMAGE_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/res")
 
 # Link to the actual SDL3 library.
 target_link_libraries(
-    hello PRIVATE 
+    tetris PRIVATE 
     SDL3_image::SDL3_image
     SDL3::SDL3)
