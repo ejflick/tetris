@@ -126,13 +126,6 @@ static char ShapeCellAt(Shape shape, Rotation rotation, int x, int y) {
   return SHAPES[shape][(rotation * 16) + (y * 4) + x];
 }
 
-typedef struct {
-  Shape shape;
-  Rotation rotation;
-  int x;
-  int y;
-} Chunk;
-
 #define ROWS 20
 #define COLS 15
 #define TOTAL_CELLS (ROWS * COLS)
@@ -168,18 +161,35 @@ static void DrawBoard(SDL_Renderer *renderer) {
   }
 }
 
-Chunk player;
+typedef struct {
+  Shape shape;
+  Rotation rotation;
+  int x;
+  int y;
+  int lastDrop;
+} Player;
+
+Player player;
 
 static void InitPlayer() {
-  player = (Chunk){.shape = T_SHAPE, .rotation = 0, .x = 0, .y = 0};
+  player = (Player){.shape = T_SHAPE, .rotation = 0, .x = 0, .y = 0, .lastDrop = 0};
+}
+
+static void TickPlayer() { 
+  if (player.lastDrop == 30) {
+    player.y += 1;
+    player.lastDrop = 0;
+  }
+
+  player.lastDrop++;
 }
 
 static void DrawPlayer(SDL_Renderer *renderer) {
-  for (size_t y = 0; y < 4; y++) {
-    for (size_t x = 0; x < 4; x++) {
+  for (int y = 0; y < 4; y++) {
+    for (int x = 0; x < 4; x++) {
       if (ShapeCellAt(player.shape, player.rotation, x, y) == OCCUPIED_CELL) {
         SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0xff);
-        DrawCell(renderer, x, y);
+        DrawCell(renderer, x + player.x, y + (player.y % 30));
       }
     }
   }
@@ -198,26 +208,63 @@ int main(int argc, char *args[]) {
   bool quit = false;
   SDL_Event e;
   SDL_zero(e);
+  Uint64 lastFrame = SDL_GetTicks();
+  Uint64 elapsed = 0;
   while (quit == false) {
     while (SDL_PollEvent(&e) == true) {
-      if (e.type == SDL_EVENT_QUIT)
+      if (e.type == SDL_EVENT_QUIT) {
         quit = true;
-      else if (e.type == SDL_EVENT_KEY_DOWN)
-        if (e.key.scancode == SDL_SCANCODE_ESCAPE)
+      } else if (e.type == SDL_EVENT_KEY_DOWN) {
+
+        switch (e.key.scancode) {
+
+        case SDL_SCANCODE_ESCAPE: {
           quit = true;
-        else if (e.key.scancode == SDL_SCANCODE_X)
+        } break;
+
+        case SDL_SCANCODE_X: {
           player.rotation = (player.rotation + 1) % 4;
+        } break;
+
+        case SDL_SCANCODE_LEFT: {
+          player.x -= 1;
+        } break;
+
+        case SDL_SCANCODE_RIGHT: {
+          player.x += 1;
+        } break;
+
+        case SDL_SCANCODE_DOWN: {
+          player.y += 1;
+        } break;
+
+        default:
+          break;
+        }
+      }
     }
 
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
-    SDL_RenderClear(renderer);
+    bool render = false;
+    Uint64 now = SDL_GetTicks();
+    elapsed += now - lastFrame;
+    while (elapsed > 16) {
+      TickPlayer();
+      render = true;
+      elapsed -= 16;
+    }
 
-    DrawBoard(renderer);
-    DrawPlayer(renderer);
+    if (render) {
+      SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
+      SDL_RenderClear(renderer);
 
-    SDL_RenderPresent(renderer);
+      DrawBoard(renderer);
+      DrawPlayer(renderer);
 
-    SDL_Delay(16);
+      SDL_RenderPresent(renderer);
+    }
+
+    lastFrame = now;
+    SDL_Delay(1);
   }
 
   SDL_DestroyRenderer(renderer);
