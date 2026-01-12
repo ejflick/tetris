@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hello)
+project(tetris)
 
 # set the output directory for built objects.
 # This makes sure that the dynamic library goes into the build directory automatically.
@@ -14,10 +14,12 @@ add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 
 # Create your game executable target as usual
-add_executable(tetris main.c)
-
-file(GLOB_RECURSE IMAGE_FILES "${RESOURCE_DIR}/*.png")
-file(COPY ${IMAGE_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/res")
+add_executable(
+    tetris 
+    
+    main.c 
+    shapes.c
+)
 
 # Link to the actual SDL3 library.
 target_link_libraries(

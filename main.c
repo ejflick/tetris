@@ -9,22 +9,6 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-#define T_SHAPE 0
-#define LL_SHAPE 1
-#define LR_SHAPE 2
-#define SQUARE_SHAPE 3
-#define I_SHAPE 4
-
-#define EMPTY_CELL '.'
-#define OCCUPIED_CELL '+'
-
-typedef size_t Shape;
-typedef size_t Rotation;
-
-static char ShapeCellAt(Shape shape, Rotation rotation, int x, int y) {
-  return SHAPES[shape][(rotation * 16) + (y * 4) + x];
-}
-
 #define ROWS 20
 #define COLS 15
 #define TOTAL_CELLS (ROWS * COLS)
