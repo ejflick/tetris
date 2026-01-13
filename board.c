@@ -1,13 +1,17 @@
 #include "board.h"
+#include <stdint.h>
 
-static char board[TOTAL_CELLS];
+#define BOARD_EMPTY_CELL 0
+
+// If a cell is empty, it will be 0. Otherwise, it will be the 24-bit RGB color of the cell.
+static uint32_t board[TOTAL_CELLS];
 
 void InitBoard() { 
-  SDL_memset(board, EMPTY_CELL, sizeof(board));
+  SDL_memset(board, BOARD_EMPTY_CELL, sizeof(board));
 }
 
-int CellAt(int x, int y) { 
-  if (y >= ROWS || y < 0 || x >= COLS || x < 0) return OCCUPIED_CELL;
+uint32_t CellAt(int x, int y) { 
+  if (y >= ROWS || y < 0 || x >= COLS || x < 0) return 1;
   return board[(y * COLS) + x];
 }
 
@@ -22,10 +26,17 @@ void DrawCell(SDL_Renderer *renderer, float x, float y) {
 void DrawBoard(SDL_Renderer *renderer) {
   for (int y = 0; y < ROWS; y++) {
     for (int x = 0; x < COLS; x++) {
-      if (CellAt(x, y) == EMPTY_CELL) {
+      uint32_t cell = CellAt(x, y);
+      if (cell == BOARD_EMPTY_CELL) {
         SDL_SetRenderDrawColor(renderer, 0x11, 0x11, 0x11, 0xff);
       } else {
-        SDL_SetRenderDrawColor(renderer, 0xee, 0x30, 0x11, 0xff);
+        SDL_SetRenderDrawColor(
+          renderer, 
+          (cell >> 16) & 0xff,
+          (cell >> 8) & 0xff, 
+          cell & 0xff, 
+          0xff
+        );
       }
 
       DrawCell(renderer, x, y);
@@ -37,9 +48,9 @@ bool CanPlaceShapeAt(int x, int y, Shape shape, Rotation rotation) {
   // TODO: Remove magic number. The data of all shapes is represented by a 4x4 shape.
   for (int sy = 0; sy < 4; sy++) {
     for (int sx = 0; sx < 4; sx++) {
-      if (ShapeCellAt(shape, rotation, sx, sy) == EMPTY_CELL) continue;
+      if (ShapeCellAt(shape, rotation, sx, sy) == SHAPE_EMPTY_CELL) continue;
 
-      if (CellAt(x + sx, y + sy) == OCCUPIED_CELL) {
+      if (CellAt(x + sx, y + sy) > 0) {
         return false;
       }
     }
@@ -48,13 +59,13 @@ bool CanPlaceShapeAt(int x, int y, Shape shape, Rotation rotation) {
   return true;
 }
 
-void OccupyBoardCells(int x, int y, Shape shape, Rotation rotation) {
+void OccupyBoardCells(int x, int y, Shape shape, Rotation rotation, uint32_t color) {
   // TODO: More magic numbers.
   for (int sy = 0; sy < 4; sy++) {
     for (int sx = 0; sx < 4; sx++) {
-      if (ShapeCellAt(shape, rotation, sx, sy) == EMPTY_CELL) continue;
+      if (ShapeCellAt(shape, rotation, sx, sy) == SHAPE_EMPTY_CELL) continue;
 
-      board[((sy + y) * COLS + (sx + x))] = OCCUPIED_CELL;
+      board[((sy + y) * COLS) + (sx + x)] = color;
     }
   }
 }

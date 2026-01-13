@@ -1,5 +1,15 @@
 #include "shapes.h"
+#include <SDL3/SDL_pixels.h>
 
+static const uint32_t SHAPE_COLORS[7] = {
+  0xf0dab1,
+  0xe39aac,
+  0xc45d9f,
+  0x634b7d,
+  0x6461c2,
+  0x2ba9b4,
+  0x93d4b5
+};
 
 static const char SHAPES[7][64] = {
                             // T
@@ -153,4 +163,8 @@ static const char SHAPES[7][64] = {
 
 char ShapeCellAt(Shape shape, Rotation rotation, int x, int y) {
   return SHAPES[shape][(rotation * 16) + (y * 4) + x];
+}
+
+uint32_t ShapeColor(Shape shape) {
+  return SHAPE_COLORS[shape];
 }

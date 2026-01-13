@@ -5,7 +5,7 @@
 static Player player;
 
 void InitPlayer() {
-  player = (Player){.shape = T_SHAPE, .rotation = 0, .x = 0, .y = 0, .lastFall = 0};
+  player = (Player){.shape = 0, .rotation = 0, .x = 0, .y = 0, .lastFall = 0};
 }
 
 static void NextShape() {
@@ -20,7 +20,7 @@ static void MoveDown() {
   if (CanPlaceShapeAt(player.x, player.y + 1, player.shape, player.rotation)) {
     player.y++;
   } else {
-    OccupyBoardCells(player.x, player.y, player.shape, player.rotation);
+    OccupyBoardCells(player.x, player.y, player.shape, player.rotation, ShapeColor(player.shape));
     NextShape();
   }
 }
@@ -37,8 +37,15 @@ void TickPlayer() {
 void DrawPlayer(SDL_Renderer *renderer) {
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
-      if (ShapeCellAt(player.shape, player.rotation, x, y) == OCCUPIED_CELL) {
-        SDL_SetRenderDrawColor(renderer, 0xed, 0x10, 0x21, 0xff);
+      if (ShapeCellAt(player.shape, player.rotation, x, y) != SHAPE_EMPTY_CELL) {
+        Uint32 color = ShapeColor(player.shape);
+        SDL_SetRenderDrawColor(
+          renderer, 
+          (color >> 16) & 0xff, 
+          (color >> 8) & 0xff, 
+          color & 0xff, 
+          0xff
+        );
         DrawCell(renderer, x + player.x, y + player.y);
       }
     }

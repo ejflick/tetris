@@ -13,12 +13,12 @@
 
 void InitBoard();
 
-int CellAt(int x, int y);
+uint32_t CellAt(int x, int y);
 
 void DrawCell(SDL_Renderer *renderer, float x, float y);
 void DrawBoard(SDL_Renderer *renderer);
 
 bool CanPlaceShapeAt(int x, int y, Shape shape, Rotation rotation);
-void OccupyBoardCells(int x, int y, Shape shape, Rotation rotation);
+void OccupyBoardCells(int x, int y, Shape shape, Rotation rotation, uint32_t color);
 
 #endif
