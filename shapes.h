@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #define SHAPE_EMPTY_CELL '.'
+#define TOTAL_SHAPES 7
 
 typedef size_t Shape;
 typedef size_t Rotation;

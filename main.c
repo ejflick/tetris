@@ -24,6 +24,8 @@ int main(int argc, char *args[]) {
   InitBoard();
   InitPlayer();
 
+  SDL_srand(0);
+
   bool quit = false;
   SDL_Event e;
   SDL_zero(e);

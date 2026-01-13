@@ -11,7 +11,7 @@ static const uint32_t SHAPE_COLORS[7] = {
   0x93d4b5
 };
 
-static const char SHAPES[7][64] = {
+static const char SHAPES[TOTAL_SHAPES][64] = {
                             // T
                             ".+.."
                             "+++."

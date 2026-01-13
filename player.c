@@ -5,13 +5,13 @@
 static Player player;
 
 void InitPlayer() {
-  player = (Player){.shape = 0, .rotation = 0, .x = 0, .y = 0, .lastFall = 0};
+  player = (Player){.shape = SDL_rand(TOTAL_SHAPES), .rotation = 0, .x = 0, .y = 0, .lastFall = 0};
 }
 
 static void NextShape() {
   player.x = 4;
   player.y = 0;
-  player.shape = (player.shape + 1) % 7;
+  player.shape = SDL_rand(TOTAL_SHAPES);
   player.lastFall = 0;
   player.rotation = 0;
 }
