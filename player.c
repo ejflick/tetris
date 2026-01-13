@@ -30,7 +30,7 @@ static bool MoveDown() {
 }
 
 /// Immediately drops the piece as low as possible.
-static bool Teleport() {
+static void Teleport() {
   while (MoveDown()) {}
 }
 
