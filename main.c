@@ -67,7 +67,7 @@ int main(int argc, char *args[]) {
 
       SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
       SDL_RenderClear(renderer);
-          SDL_FRect src = {.x = 0, .y = 0, .w = SCREEN_WIDTH, .h = SCREEN_HEIGHT};
+      SDL_FRect src = {.x = 0, .y = 0, .w = SCREEN_WIDTH, .h = SCREEN_HEIGHT};
       SDL_FRect dest = src;
       dest.x += 32; dest.y += 32;
 

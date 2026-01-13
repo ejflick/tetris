@@ -15,7 +15,14 @@ uint32_t CellAt(int x, int y) {
   return board[(y * COLS) + x];
 }
 
-void DrawCell(SDL_Renderer *renderer, float x, float y) {
+void DrawCell(SDL_Renderer *renderer, float x, float y, uint32_t color) {
+  SDL_SetRenderDrawColor(
+    renderer, 
+    (color >> 16) & 0xff, 
+    (color >> 8) & 0xff, 
+    color & 0xff, 
+    0xff
+  );
   SDL_FRect rect = {.x = (float)(CELL_SIZE * x) + (CELL_MARGIN * x),
                     .y = (float)(CELL_SIZE * y) + (CELL_MARGIN * y),
                     .w = CELL_SIZE - 1,
@@ -27,19 +34,7 @@ void DrawBoard(SDL_Renderer *renderer) {
   for (int y = 0; y < ROWS; y++) {
     for (int x = 0; x < COLS; x++) {
       uint32_t cell = CellAt(x, y);
-      if (cell == BOARD_EMPTY_CELL) {
-        SDL_SetRenderDrawColor(renderer, 0x11, 0x11, 0x11, 0xff);
-      } else {
-        SDL_SetRenderDrawColor(
-          renderer, 
-          (cell >> 16) & 0xff,
-          (cell >> 8) & 0xff, 
-          cell & 0xff, 
-          0xff
-        );
-      }
-
-      DrawCell(renderer, x, y);
+      DrawCell(renderer, x, y, cell == 0 ? 0x111111 : cell);
     }
   }
 }

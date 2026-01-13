@@ -55,7 +55,7 @@ void DrawPlayer(SDL_Renderer *renderer) {
           color & 0xff, 
           0xff
         );
-        DrawCell(renderer, x + player.x, y + player.y);
+        DrawCell(renderer, x + player.x, y + player.y, ShapeColor(player.shape));
       }
     }
   }
