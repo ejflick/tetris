@@ -19,6 +19,8 @@ add_executable(
     
     main.c 
     shapes.c
+    board.c
+    player.c
 )
 
 # Link to the actual SDL3 library.
