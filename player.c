@@ -11,7 +11,7 @@ void InitPlayer() {
 static void NextShape() {
   player.x = 4;
   player.y = 0;
-  player.shape = (player.shape + 1) % 5;
+  player.shape = (player.shape + 1) % 7;
   player.lastFall = 0;
   player.rotation = 0;
 }
@@ -54,11 +54,13 @@ void HandlePlayerInput(SDL_Event event) {
         } break;
 
         case SDL_SCANCODE_LEFT: {
-          player.x -= 1;
+          if (CanPlaceShapeAt(player.x - 1, player.y, player.shape, player.rotation))
+            player.x -= 1;
         } break;
 
         case SDL_SCANCODE_RIGHT: {
-          player.x += 1;
+          if (CanPlaceShapeAt(player.x + 1, player.y, player.shape, player.rotation))
+            player.x += 1;
         } break;
 
         case SDL_SCANCODE_DOWN: {

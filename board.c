@@ -7,7 +7,7 @@ void InitBoard() {
 }
 
 int CellAt(int x, int y) { 
-  if (y >= ROWS) return OCCUPIED_CELL;
+  if (y >= ROWS || y < 0 || x >= COLS || x < 0) return OCCUPIED_CELL;
   return board[(y * COLS) + x];
 }
 

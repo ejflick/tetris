@@ -29,6 +29,7 @@ int main(int argc, char *args[]) {
   SDL_zero(e);
   Uint64 lastFrame = SDL_GetTicks();
   Uint64 elapsed = 0;
+  
   while (quit == false) {
     while (SDL_PollEvent(&e) == true) {
       if (e.type == SDL_EVENT_QUIT) {
