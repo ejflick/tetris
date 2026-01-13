@@ -16,13 +16,22 @@ static void NextShape() {
   player.rotation = 0;
 }
 
-static void MoveDown() {
+/// Moves the player down one space.
+/// @return true if player moved down, false otherwise(collided).
+static bool MoveDown() {
   if (CanPlaceShapeAt(player.x, player.y + 1, player.shape, player.rotation)) {
     player.y++;
-  } else {
-    OccupyBoardCells(player.x, player.y, player.shape, player.rotation, ShapeColor(player.shape));
-    NextShape();
+    return true;
   }
+
+  OccupyBoardCells(player.x, player.y, player.shape, player.rotation, ShapeColor(player.shape));
+  NextShape();
+  return false;
+}
+
+/// Immediately drops the piece as low as possible.
+static bool Teleport() {
+  while (MoveDown()) {}
 }
 
 void TickPlayer() { 
@@ -72,6 +81,10 @@ void HandlePlayerInput(SDL_Event event) {
 
         case SDL_SCANCODE_DOWN: {
           player.lastFall = 30;
+        } break;
+
+        case SDL_SCANCODE_UP: {
+          Teleport();
         } break;
 
         default: break;
