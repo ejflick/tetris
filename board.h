@@ -5,7 +5,7 @@
 #include "shapes.h"
 
 #define ROWS 20
-#define COLS 15
+#define COLS 10
 #define TOTAL_CELLS (ROWS * COLS)
 
 #define CELL_MARGIN 3

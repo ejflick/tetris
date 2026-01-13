@@ -59,7 +59,7 @@ bool CanPlaceShapeAt(int x, int y, Shape shape, Rotation rotation) {
   return true;
 }
 
-static void ClearRowsIfPossible() {
+static void ClearRows() {
   for (int row = 0; row < ROWS; row++) {
     bool canBeCleared = true;
     for (int col = 0; col < COLS; col++) {
@@ -67,11 +67,12 @@ static void ClearRowsIfPossible() {
     }
 
     if (canBeCleared) {
-      if (row != 0) {
-        SDL_memmove(board + COLS, board, ((row + 1) * COLS) * sizeof(uint32_t));
+      // Move rows above down one.
+      for (int crow = row; crow > 0; crow--) {
+        for (int ccol = 0; ccol < COLS; ccol++) {
+          board[(crow * COLS) + ccol] = board[((crow - 1) * COLS) + ccol];
+        }
       }
-
-      SDL_memset(board, 0, COLS * sizeof(uint32_t));
     }
   }
 }
@@ -86,5 +87,5 @@ void OccupyBoardCells(int x, int y, Shape shape, Rotation rotation, uint32_t col
     }
   }
 
-  ClearRowsIfPossible();
+  ClearRows();
 }
