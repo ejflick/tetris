@@ -10,6 +10,7 @@ typedef struct {
   int x;
   int y;
   int lastFall;
+  int rotateGracePeriod;
   bool rotationPressed;
 } Player;
 
