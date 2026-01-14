@@ -2,6 +2,8 @@
 #include "board.h"
 #include "shapes.h"
 
+#define NO_SAVED_SHAPE -1
+
 static Player player;
 static Shape shapeQueue[TOTAL_SHAPES];
 static int queuePos;
@@ -30,7 +32,9 @@ void InitPlayer() {
                     .x = 0,
                     .y = 0,
                     .lastFall = 0,
-                    .rotateGracePeriod = 0};
+                    .rotateGracePeriod = 0,
+                    .canSwitch = true,
+                    .saved = NO_SAVED_SHAPE};
 }
 
 static void NextShape() {
@@ -42,10 +46,26 @@ static void NextShape() {
 
   player.x = 4;
   player.y = 0;
-  player.shape = queuePos;
+  player.shape = shapeQueue[queuePos];
   player.lastFall = 0;
   player.rotation = 0;
   player.rotateGracePeriod = 0;
+  player.canSwitch = true;
+}
+
+static void SaveShape() {
+  if (!player.canSwitch) return;
+
+  if (player.saved == NO_SAVED_SHAPE) {
+    player.saved = player.shape;
+    NextShape();
+  } else {
+    Shape tmp = player.shape;
+    player.shape = player.saved;
+    player.saved = tmp;
+    player.y = 0;
+    player.canSwitch = false;
+  }
 }
 
 /// Moves the player down one space.
@@ -93,8 +113,20 @@ void DrawPlayer(SDL_Renderer* renderer) {
   }
 }
 
+void DrawHud(SDL_Renderer* renderer) {
+  DrawShape(renderer, shapeQueue[(queuePos + 1) % TOTAL_SHAPES], 0, 32, 32);
+
+  if (player.saved != NO_SAVED_SHAPE) {
+    DrawShape(renderer, player.saved, 0, 32, 96);
+  }
+}
+
 void HandlePlayerInput(SDL_Event event) {
   switch (event.key.scancode) {
+  case SDL_SCANCODE_Z: {
+    SaveShape();
+  } break;
+
   case SDL_SCANCODE_X: {
     int nextRotation = (player.rotation + 1) % 4;
     if (CanPlaceShapeAt(player.x, player.y, player.shape, nextRotation)) {

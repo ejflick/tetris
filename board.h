@@ -16,6 +16,8 @@ void InitBoard();
 uint32_t CellAt(int x, int y);
 
 void DrawCell(SDL_Renderer *renderer, float x, float y, uint32_t color);
+void DrawCellAtPos(SDL_Renderer *renderer, float x, float y, uint32_t color);
+void DrawShape(SDL_Renderer* renderer, Shape shape, Rotation rotation, float x, float y);
 void DrawBoard(SDL_Renderer *renderer);
 
 bool CanPlaceShapeAt(int x, int y, Shape shape, Rotation rotation);

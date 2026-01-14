@@ -11,12 +11,15 @@ typedef struct {
   int y;
   int lastFall;
   int rotateGracePeriod;
+  Shape saved;
+  bool canSwitch;
   bool rotationPressed;
 } Player;
 
 void InitPlayer();
 void TickPlayer();
-void DrawPlayer(SDL_Renderer *renderer);
+void DrawPlayer(SDL_Renderer* renderer);
+void DrawHud(SDL_Renderer* renderer);
 void HandlePlayerInput(SDL_Event event);
 
 #endif

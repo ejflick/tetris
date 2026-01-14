@@ -16,6 +16,19 @@ uint32_t CellAt(int x, int y) {
 }
 
 void DrawCell(SDL_Renderer *renderer, float x, float y, uint32_t color) {
+  DrawCellAtPos(renderer, (float)(CELL_SIZE * x) + (CELL_MARGIN * x), (float)(CELL_SIZE * y) + (CELL_MARGIN * y), color);
+}
+
+void DrawShape(SDL_Renderer* renderer, Shape shape, Rotation rotation, float x, float y) {
+  for (int sy = 0; sy < 4; sy++) {
+    for (int sx = 0; sx < 4; sx++) {
+      if (ShapeCellAt(shape, rotation, sx, sy) != SHAPE_EMPTY_CELL)
+        DrawCellAtPos(renderer, x + (CELL_SIZE * sx) + (CELL_MARGIN * sx), y + (CELL_SIZE * sy) + (CELL_MARGIN * sy), ShapeColor(shape));
+    }
+  }
+}
+
+void DrawCellAtPos(SDL_Renderer* renderer, float x, float y, uint32_t color) {
   SDL_SetRenderDrawColor(
     renderer, 
     (color >> 16) & 0xff, 
@@ -23,8 +36,8 @@ void DrawCell(SDL_Renderer *renderer, float x, float y, uint32_t color) {
     color & 0xff, 
     0xff
   );
-  SDL_FRect rect = {.x = (float)(CELL_SIZE * x) + (CELL_MARGIN * x),
-                    .y = (float)(CELL_SIZE * y) + (CELL_MARGIN * y),
+  SDL_FRect rect = {.x = (float)x,
+                    .y = (float)y,
                     .w = CELL_SIZE - 1,
                     .h = CELL_SIZE - 1};
   SDL_RenderFillRect(renderer, &rect);

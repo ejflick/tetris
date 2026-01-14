@@ -17,9 +17,12 @@ int main(int argc, char *args[]) {
   SDL_Renderer *renderer;
   SDL_CreateWindowAndRenderer("Tetris", SCREEN_WIDTH, SCREEN_HEIGHT, 0, &window,
                               &renderer);
-  SDL_Texture *boardTexture =
+  SDL_Texture* boardTexture =
       SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
                         SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+  SDL_Texture* hudTexture =
+        SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   InitBoard();
   InitPlayer();
@@ -73,6 +76,16 @@ int main(int argc, char *args[]) {
 
       SDL_RenderTexture(renderer, boardTexture, &src, &dest);
 
+      SDL_SetRenderTarget(renderer, hudTexture);
+        SDL_SetRenderDrawColor(renderer, 0x22, 0x22, 0x22, 0xff);
+        SDL_RenderClear(renderer);
+        DrawHud(renderer);
+      SDL_SetRenderTarget(renderer, NULL);
+
+      dest.x = 32 + (COLS * CELL_SIZE + (CELL_MARGIN * CELL_SIZE));
+      dest.y = 0;
+      SDL_RenderTexture(renderer, hudTexture, &src, &dest);
+
       SDL_RenderPresent(renderer);
     }
 
@@ -80,6 +93,7 @@ int main(int argc, char *args[]) {
     SDL_Delay(1);
   }
 
+  SDL_DestroyTexture(hudTexture);
   SDL_DestroyTexture(boardTexture);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
