@@ -3,21 +3,46 @@
 #include "board.h"
 
 static Player player;
+static Shape shapeQueue[TOTAL_SHAPES];
+static int queuePos;
+
+static void ShuffleQueue() {
+  // Queue in numerical order.
+  for (int i = 0; i < TOTAL_SHAPES; i++) {
+    shapeQueue[i] = i;
+  }
+
+  for (int i = 0; i < TOTAL_SHAPES; i++) {
+    Sint32 swapWith = SDL_rand(TOTAL_SHAPES);
+    Shape tmp = shapeQueue[i];
+    shapeQueue[i] = shapeQueue[swapWith];
+    shapeQueue[swapWith] = tmp;
+  }
+
+  queuePos = 0;
+}
 
 void InitPlayer() {
-  player = (Player){.shape = SDL_rand(TOTAL_SHAPES), .rotation = 0, .x = 0, .y = 0, .lastFall = 0};
+  ShuffleQueue();
+  player = (Player){.shape = queuePos, .rotation = 0, .x = 0, .y = 0, .lastFall = 0};
 }
 
 static void NextShape() {
+  queuePos += 1;
+
+  if (queuePos == TOTAL_SHAPES) {
+    ShuffleQueue();
+  }
+
   player.x = 4;
   player.y = 0;
-  player.shape = SDL_rand(TOTAL_SHAPES);
+  player.shape = queuePos;
   player.lastFall = 0;
   player.rotation = 0;
 }
 
 /// Moves the player down one space.
-/// @return true if player moved down, false otherwise(collided).
+/// @return {bool} true if player moved down, false otherwise(collided).
 static bool MoveDown() {
   if (CanPlaceShapeAt(player.x, player.y + 1, player.shape, player.rotation)) {
     player.y++;
@@ -47,14 +72,6 @@ void DrawPlayer(SDL_Renderer *renderer) {
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
       if (ShapeCellAt(player.shape, player.rotation, x, y) != SHAPE_EMPTY_CELL) {
-        Uint32 color = ShapeColor(player.shape);
-        SDL_SetRenderDrawColor(
-          renderer, 
-          (color >> 16) & 0xff, 
-          (color >> 8) & 0xff, 
-          color & 0xff, 
-          0xff
-        );
         DrawCell(renderer, x + player.x, y + player.y, ShapeColor(player.shape));
       }
     }
