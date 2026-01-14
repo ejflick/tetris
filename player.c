@@ -27,7 +27,7 @@ static void ShuffleQueue() {
 
 void InitPlayer() {
   ShuffleQueue();
-  player = (Player){.shape = queuePos,
+  player = (Player){.shape = shapeQueue[queuePos],
                     .rotation = 0,
                     .x = 0,
                     .y = 0,
@@ -40,10 +40,6 @@ void InitPlayer() {
 static void NextShape() {
   queuePos += 1;
 
-  if (queuePos == TOTAL_SHAPES) {
-    ShuffleQueue();
-  }
-
   player.x = 4;
   player.y = 0;
   player.shape = shapeQueue[queuePos];
@@ -51,6 +47,10 @@ static void NextShape() {
   player.rotation = 0;
   player.rotateGracePeriod = 0;
   player.canSwitch = true;
+
+  if (queuePos == TOTAL_SHAPES - 1) {
+    ShuffleQueue();
+  }
 }
 
 static void SaveShape() {
@@ -117,7 +117,7 @@ void DrawHud(SDL_Renderer* renderer) {
   DrawShape(renderer, shapeQueue[(queuePos + 1) % TOTAL_SHAPES], 0, 32, 32);
 
   if (player.saved != NO_SAVED_SHAPE) {
-    DrawShape(renderer, player.saved, 0, 32, 96);
+    DrawShape(renderer, player.saved, 0, 32, 56 + (4 * CELL_SIZE) + (4 * CELL_MARGIN));
   }
 }
 
